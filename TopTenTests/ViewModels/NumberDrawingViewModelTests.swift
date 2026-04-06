@@ -2,53 +2,40 @@ import Testing
 import Foundation
 @testable import TopTen
 
-@Suite("抽數字功能測試")
+@Suite("抽數字功能測試 (SDD)")
 @MainActor
 struct NumberDrawingViewModelTests {
     
-    @Test("驗證初始化時數字池應有 10 張牌")
-    func test_initialization_hasTenNumbers() async throws {
+    @Test("驗證可以自定義最大值 (例如 8)")
+    func test_customMaxValue_initializesCorrectly() async throws {
         let viewModel = NumberDrawingViewModel()
-        let count = viewModel.remainingCount
-        #expect(count == 10)
-        #expect(viewModel.isPoolEmpty == false)
+        await viewModel.updateMaxNumber(to: 8)
+        
+        #expect(viewModel.maxNumber == 8)
+        #expect(viewModel.remainingCount == 8)
     }
     
-    @Test("驗證抽牌後剩餘張數會減少且記錄最後抽中數字")
-    func test_drawNumber_updatesState() async throws {
+    @Test("驗證設定新最大值後會重置數字池")
+    func test_updateMaxNumber_resetsPool() async throws {
         let viewModel = NumberDrawingViewModel()
         
-        await viewModel.drawNumber()
+        await viewModel.drawNumber() // 剩下 9 張
+        await viewModel.updateMaxNumber(to: 12)
         
-        #expect(viewModel.remainingCount == 9)
-        #expect(viewModel.lastDrawnNumber != nil)
+        #expect(viewModel.remainingCount == 12)
+        #expect(viewModel.lastDrawnNumber == nil)
     }
     
-    @Test("驗證連續抽 10 次後數字池應清空並標記為 Empty")
-    func test_drawingTenTimes_emptiesPool() async throws {
+    @Test("驗證在自定義最大值 (5) 下抽完所有數字")
+    func test_drawingUntilEmpty_withCustomMax() async throws {
         let viewModel = NumberDrawingViewModel()
+        await viewModel.updateMaxNumber(to: 5)
         
-        for _ in 1...10 {
+        for _ in 1...5 {
             await viewModel.drawNumber()
         }
         
         #expect(viewModel.remainingCount == 0)
         #expect(viewModel.isPoolEmpty == true)
-    }
-    
-    @Test("驗證重置後數字池應重新回到 10 張牌")
-    func test_resetPool_restoresFullCount() async throws {
-        let viewModel = NumberDrawingViewModel()
-        
-        // 先抽幾次
-        await viewModel.drawNumber()
-        await viewModel.drawNumber()
-        
-        // 執行重置
-        await viewModel.resetPool()
-        
-        #expect(viewModel.remainingCount == 10)
-        #expect(viewModel.lastDrawnNumber == nil)
-        #expect(viewModel.isPoolEmpty == false)
     }
 }
