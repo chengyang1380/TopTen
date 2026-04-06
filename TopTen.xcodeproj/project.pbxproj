@@ -14,19 +14,11 @@
 			remoteGlobalIDString = 0FE80F302F83A11900EC165D;
 			remoteInfo = TopTen;
 		};
-		0FE80F492F83A11B00EC165D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0FE80F292F83A11900EC165D /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0FE80F302F83A11900EC165D;
-			remoteInfo = TopTen;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0FE80F312F83A11900EC165D /* TopTen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TopTen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FE80F3E2F83A11B00EC165D /* TopTenTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TopTenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0FE80F482F83A11B00EC165D /* TopTenUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TopTenUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -57,13 +49,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0FE80F452F83A11B00EC165D /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -81,7 +66,6 @@
 			children = (
 				0FE80F312F83A11900EC165D /* TopTen.app */,
 				0FE80F3E2F83A11B00EC165D /* TopTenTests.xctest */,
-				0FE80F482F83A11B00EC165D /* TopTenUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -134,26 +118,6 @@
 			productReference = 0FE80F3E2F83A11B00EC165D /* TopTenTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		0FE80F472F83A11B00EC165D /* TopTenUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0FE80F582F83A11B00EC165D /* Build configuration list for PBXNativeTarget "TopTenUITests" */;
-			buildPhases = (
-				0FE80F442F83A11B00EC165D /* Sources */,
-				0FE80F452F83A11B00EC165D /* Frameworks */,
-				0FE80F462F83A11B00EC165D /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				0FE80F4A2F83A11B00EC165D /* PBXTargetDependency */,
-			);
-			name = TopTenUITests;
-			packageProductDependencies = (
-			);
-			productName = TopTenUITests;
-			productReference = 0FE80F482F83A11B00EC165D /* TopTenUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -168,10 +132,6 @@
 						CreatedOnToolsVersion = 26.3;
 					};
 					0FE80F3D2F83A11B00EC165D = {
-						CreatedOnToolsVersion = 26.3;
-						TestTargetID = 0FE80F302F83A11900EC165D;
-					};
-					0FE80F472F83A11B00EC165D = {
 						CreatedOnToolsVersion = 26.3;
 						TestTargetID = 0FE80F302F83A11900EC165D;
 					};
@@ -193,7 +153,6 @@
 			targets = (
 				0FE80F302F83A11900EC165D /* TopTen */,
 				0FE80F3D2F83A11B00EC165D /* TopTenTests */,
-				0FE80F472F83A11B00EC165D /* TopTenUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -207,13 +166,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0FE80F3C2F83A11B00EC165D /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0FE80F462F83A11B00EC165D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -237,13 +189,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0FE80F442F83A11B00EC165D /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -251,11 +196,6 @@
 			isa = PBXTargetDependency;
 			target = 0FE80F302F83A11900EC165D /* TopTen */;
 			targetProxy = 0FE80F3F2F83A11B00EC165D /* PBXContainerItemProxy */;
-		};
-		0FE80F4A2F83A11B00EC165D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0FE80F302F83A11900EC165D /* TopTen */;
-			targetProxy = 0FE80F492F83A11B00EC165D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -520,56 +460,6 @@
 			};
 			name = Release;
 		};
-		0FE80F592F83A11B00EC165D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = AFM7G9CPR3;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
-				MACOSX_DEPLOYMENT_TARGET = 26.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = cy.TopTenUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = TopTen;
-				XROS_DEPLOYMENT_TARGET = 26.2;
-			};
-			name = Debug;
-		};
-		0FE80F5A2F83A11B00EC165D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = AFM7G9CPR3;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
-				MACOSX_DEPLOYMENT_TARGET = 26.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = cy.TopTenUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = TopTen;
-				XROS_DEPLOYMENT_TARGET = 26.2;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -596,15 +486,6 @@
 			buildConfigurations = (
 				0FE80F562F83A11B00EC165D /* Debug */,
 				0FE80F572F83A11B00EC165D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		0FE80F582F83A11B00EC165D /* Build configuration list for PBXNativeTarget "TopTenUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0FE80F592F83A11B00EC165D /* Debug */,
-				0FE80F5A2F83A11B00EC165D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
