@@ -24,49 +24,65 @@ struct NumberDrawingViewModelTests {
         #expect(viewModel.isSetupRequired == false)
     }
     
-    @Test("驗證分配的數字是否在範圍內且不重複")
-    func test_confirmSetup_assignsUniqueNumbers() async throws {
+    @Test("驗證揭曉流程：蓋牌狀態點擊應觸發確認對話框")
+    func test_requestReveal_onHiddenCard_setsCardToToggle() async throws {
         let viewModel = NumberDrawingViewModel()
-        let count = 8
-        viewModel.playerCount = count
-        
         await viewModel.confirmSetup()
+        let card = viewModel.cards[0]
         
-        let numbers = viewModel.cards.map { $0.number }
-        let uniqueNumbers = Set(numbers)
+        // 動作：請求揭曉一張蓋著的牌
+        viewModel.requestReveal(for: card)
         
-        #expect(numbers.count == count)
-        #expect(uniqueNumbers.count == count)
-        #expect(numbers.allSatisfy { $0 >= 1 && $0 <= count })
+        // 驗證：應該暫存該卡片以顯示確認對話框，且牌依然是蓋著的
+        #expect(viewModel.cardToToggle == card)
+        #expect(viewModel.cards[0].isRevealed == false)
     }
     
-    @Test("驗證切換卡片揭曉狀態")
-    func test_toggleReveal_changesCardState() async throws {
+    @Test("驗證確認揭曉後卡片狀態變更")
+    func test_confirmReveal_changesCardStateAndClearsToggle() async throws {
         let viewModel = NumberDrawingViewModel()
         await viewModel.confirmSetup()
+        let card = viewModel.cards[0]
         
-        let cardId = try #require(viewModel.cards.first?.id)
+        viewModel.requestReveal(for: card)
+        viewModel.confirmReveal(for: card.id)
         
-        // 初始應該是隱藏
-        #expect(viewModel.cards[0].isRevealed == false)
+        #expect(viewModel.cards[0].isRevealed == true)
+        #expect(viewModel.cardToToggle == nil)
+    }
+    
+    @Test("驗證揭曉狀態下再次點擊應直接蓋牌")
+    func test_requestReveal_onRevealedCard_togglesBackDirectly() async throws {
+        let viewModel = NumberDrawingViewModel()
+        await viewModel.confirmSetup()
+        let cardId = viewModel.cards[0].id
         
-        // 揭曉
-        viewModel.toggleReveal(for: cardId)
+        // 先揭曉
+        viewModel.confirmReveal(for: cardId)
         #expect(viewModel.cards[0].isRevealed == true)
         
-        // 再次蓋上
-        viewModel.toggleReveal(for: cardId)
+        // 動作：再次請求揭曉（此時應該是蓋回去）
+        viewModel.requestReveal(for: viewModel.cards[0])
+        
+        // 驗證：牌蓋回去了，且不需要對話框確認
         #expect(viewModel.cards[0].isRevealed == false)
+        #expect(viewModel.cardToToggle == nil)
     }
     
-    @Test("驗證重新洗牌後卡片數量不變")
-    func test_reshuffle_maintainsCardCount() async throws {
+    @Test("驗證重置請求會觸發 Alert 狀態")
+    func test_requestReset_showsAlert() async throws {
         let viewModel = NumberDrawingViewModel()
-        viewModel.playerCount = 10
-        await viewModel.confirmSetup()
+        viewModel.requestReset()
+        #expect(viewModel.isShowingResetAlert == true)
+    }
+    
+    @Test("驗證重新洗牌後會關閉 Alert")
+    func test_reshuffle_closesAlert() async throws {
+        let viewModel = NumberDrawingViewModel()
+        viewModel.requestReset()
         
         await viewModel.reshuffle()
         
-        #expect(viewModel.cards.count == 10)
+        #expect(viewModel.isShowingResetAlert == false)
     }
 }

@@ -2,7 +2,6 @@ import SwiftUI
 
 struct NumberDrawingView: View {
     @State private var viewModel = NumberDrawingViewModel()
-    @State private var isShowingResetAlert = false
     private let haptic = UIImpactFeedbackGenerator(style: .medium)
     
     private let columns = [
@@ -23,7 +22,9 @@ struct NumberDrawingView: View {
                         
                         Button {
                             haptic.impactOccurred()
-                            viewModel.openSettings()
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                viewModel.openSettings()
+                            }
                         } label: {
                             Image(systemName: "person.badge.plus")
                                 .foregroundColor(.teal)
@@ -35,10 +36,7 @@ struct NumberDrawingView: View {
                         LazyVGrid(columns: columns, spacing: 25) {
                             ForEach(viewModel.cards) { card in
                                 PlayerCardView(card: card) {
-                                    haptic.impactOccurred(intensity: 0.6)
-                                    withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                                        viewModel.toggleReveal(for: card.id)
-                                    }
+                                    handleCardTap(card: card)
                                 }
                             }
                         }
@@ -49,7 +47,7 @@ struct NumberDrawingView: View {
                     VStack(spacing: 12) {
                         Button {
                             haptic.impactOccurred()
-                            isShowingResetAlert = true
+                            viewModel.requestReset()
                         } label: {
                             HStack {
                                 Image(systemName: "arrow.counterclockwise.circle.fill")
@@ -67,7 +65,7 @@ struct NumberDrawingView: View {
                     .background(.ultraThinMaterial)
                 }
                 .navigationTitle("發牌")
-                .alert("確定要重新洗牌嗎？", isPresented: $isShowingResetAlert) {
+                .alert("確定要重新洗牌嗎？", isPresented: $viewModel.isShowingResetAlert) {
                     Button("確定重置", role: .destructive) {
                         Task { await viewModel.reshuffle() }
                     }
@@ -76,12 +74,94 @@ struct NumberDrawingView: View {
                     Text("這將會打亂所有數字並重新發放。")
                 }
                 
-                // 初始設定 Overlay
+                // 1. 初始設定 Overlay
                 if viewModel.isSetupRequired {
                     SetupOverlay(viewModel: viewModel)
-                        .transition(.opacity.combined(with: .scale))
+                        .transition(.asymmetric(
+                            insertion: .opacity.combined(with: .scale(scale: 0.9)),
+                            removal: .opacity.combined(with: .scale(scale: 1.1))
+                        ))
+                        .zIndex(2)
+                }
+                
+                // 2. 翻牌確認 Overlay
+                if let card = viewModel.cardToToggle {
+                    RevealOverlay(viewModel: viewModel, card: card)
+                        .transition(.asymmetric(
+                            insertion: .opacity.combined(with: .scale(scale: 0.9)),
+                            removal: .opacity.combined(with: .scale(scale: 1.1))
+                        ))
+                        .zIndex(3)
                 }
             }
+        }
+    }
+    
+    private func handleCardTap(card: PlayerCard) {
+        haptic.impactOccurred(intensity: 0.6)
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+            viewModel.requestReveal(for: card)
+        }
+    }
+}
+
+/// 揭曉確認對話框 (優化動畫與視覺)
+struct RevealOverlay: View {
+    let viewModel: NumberDrawingViewModel
+    let card: PlayerCard
+    
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.4)
+                .ignoresSafeArea()
+            
+            VStack(spacing: 25) {
+                VStack(spacing: 12) {
+                    Image(systemName: "eye.fill")
+                        .font(.system(size: 40))
+                        .foregroundColor(.teal)
+                    
+                    Text("揭曉數字？")
+                        .font(.title3.bold())
+                    
+                    Text("確定要翻開 **玩家 \(card.playerIndex)** 的數字嗎？\n請確保只有您本人在看螢幕。")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                
+                VStack(spacing: 12) {
+                    Button {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                            viewModel.confirmReveal(for: card.id)
+                        }
+                    } label: {
+                        Text("確定揭曉")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.teal)
+                            .foregroundColor(.white)
+                            .cornerRadius(15)
+                    }
+                    
+                    Button {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                            viewModel.cardToToggle = nil
+                        }
+                    } label: {
+                        Text("取消")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .padding()
+                    }
+                }
+            }
+            .padding(30)
+            .background(Color(.systemBackground))
+            .cornerRadius(25)
+            .shadow(color: .black.opacity(0.15), radius: 20)
+            .padding(40)
         }
     }
 }
@@ -89,7 +169,7 @@ struct NumberDrawingView: View {
 /// 初始設定對話框
 struct SetupOverlay: View {
     @Bindable var viewModel: NumberDrawingViewModel
-    @State private var tempPlayerCount: Int = 0 // 使用暫存的人數，方便取消
+    @State private var tempPlayerCount: Int = 0
     
     var body: some View {
         ZStack {
@@ -126,7 +206,9 @@ struct SetupOverlay: View {
                 VStack(spacing: 12) {
                     Button {
                         viewModel.playerCount = tempPlayerCount
-                        Task { await viewModel.confirmSetup() }
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                            Task { await viewModel.confirmSetup() }
+                        }
                     } label: {
                         Text("開始發牌")
                             .font(.headline)
@@ -137,23 +219,24 @@ struct SetupOverlay: View {
                             .cornerRadius(15)
                     }
                     
-                    // 僅在已有卡片時顯示取消按鈕
                     if !viewModel.cards.isEmpty {
                         Button {
-                            viewModel.cancelSetup()
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                viewModel.cancelSetup()
+                            }
                         } label: {
                             Text("返回遊戲")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
+                                .padding()
                         }
-                        .padding(.top, 5)
                     }
                 }
             }
             .padding(30)
             .background(Color(.systemBackground))
             .cornerRadius(25)
-            .shadow(radius: 20)
+            .shadow(color: .black.opacity(0.15), radius: 20)
             .padding(40)
         }
         .onAppear {
