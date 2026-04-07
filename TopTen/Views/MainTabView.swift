@@ -6,14 +6,20 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $viewModel.selectedTab) {
             ForEach(viewModel.tabs) { tab in
-                TabContentView(tab: tab)
-                    .tabItem {
-                        Label(tab.title, systemImage: tab.iconName)
+                Group {
+                    if tab.type == .numberDrawing {
+                        NumberDrawingView()
+                    } else {
+                        TabContentView(tab: tab)
                     }
-                    .tag(Optional(tab))
+                }
+                .tabItem {
+                    Label(tab.title, systemImage: tab.iconName)
+                }
+                .tag(Optional(tab))
             }
         }
-        .tint(.teal) // 根據 GEMINI.md 指定的主色調
+        .tint(.teal)
     }
 }
 

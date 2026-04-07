@@ -2,40 +2,71 @@ import Testing
 import Foundation
 @testable import TopTen
 
-@Suite("抽數字功能測試 (SDD)")
+@Suite("發牌功能測試 (SDD)")
 @MainActor
 struct NumberDrawingViewModelTests {
     
-    @Test("驗證可以自定義最大值 (例如 8)")
-    func test_customMaxValue_initializesCorrectly() async throws {
+    @Test("驗證初始化狀態下需要設定人數")
+    func test_initialState_requiresSetup() async throws {
         let viewModel = NumberDrawingViewModel()
-        await viewModel.updateMaxNumber(to: 8)
-        
-        #expect(viewModel.maxNumber == 8)
-        #expect(viewModel.remainingCount == 8)
+        #expect(viewModel.isSetupRequired == true)
+        #expect(viewModel.cards.isEmpty == true)
     }
     
-    @Test("驗證設定新最大值後會重置數字池")
-    func test_updateMaxNumber_resetsPool() async throws {
+    @Test("驗證確認人數後正確分配卡片")
+    func test_confirmSetup_generatesCorrectNumberOfCards() async throws {
         let viewModel = NumberDrawingViewModel()
+        viewModel.playerCount = 6
         
-        await viewModel.drawNumber() // 剩下 9 張
-        await viewModel.updateMaxNumber(to: 12)
+        await viewModel.confirmSetup()
         
-        #expect(viewModel.remainingCount == 12)
-        #expect(viewModel.lastDrawnNumber == nil)
+        #expect(viewModel.cards.count == 6)
+        #expect(viewModel.isSetupRequired == false)
     }
     
-    @Test("驗證在自定義最大值 (5) 下抽完所有數字")
-    func test_drawingUntilEmpty_withCustomMax() async throws {
+    @Test("驗證分配的數字是否在範圍內且不重複")
+    func test_confirmSetup_assignsUniqueNumbers() async throws {
         let viewModel = NumberDrawingViewModel()
-        await viewModel.updateMaxNumber(to: 5)
+        let count = 8
+        viewModel.playerCount = count
         
-        for _ in 1...5 {
-            await viewModel.drawNumber()
-        }
+        await viewModel.confirmSetup()
         
-        #expect(viewModel.remainingCount == 0)
-        #expect(viewModel.isPoolEmpty == true)
+        let numbers = viewModel.cards.map { $0.number }
+        let uniqueNumbers = Set(numbers)
+        
+        #expect(numbers.count == count)
+        #expect(uniqueNumbers.count == count)
+        #expect(numbers.allSatisfy { $0 >= 1 && $0 <= count })
+    }
+    
+    @Test("驗證切換卡片揭曉狀態")
+    func test_toggleReveal_changesCardState() async throws {
+        let viewModel = NumberDrawingViewModel()
+        await viewModel.confirmSetup()
+        
+        let cardId = try #require(viewModel.cards.first?.id)
+        
+        // 初始應該是隱藏
+        #expect(viewModel.cards[0].isRevealed == false)
+        
+        // 揭曉
+        viewModel.toggleReveal(for: cardId)
+        #expect(viewModel.cards[0].isRevealed == true)
+        
+        // 再次蓋上
+        viewModel.toggleReveal(for: cardId)
+        #expect(viewModel.cards[0].isRevealed == false)
+    }
+    
+    @Test("驗證重新洗牌後卡片數量不變")
+    func test_reshuffle_maintainsCardCount() async throws {
+        let viewModel = NumberDrawingViewModel()
+        viewModel.playerCount = 10
+        await viewModel.confirmSetup()
+        
+        await viewModel.reshuffle()
+        
+        #expect(viewModel.cards.count == 10)
     }
 }
