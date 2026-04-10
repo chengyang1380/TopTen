@@ -1,28 +1,34 @@
 # 腦洞量表 Top Ten - 功能規格書 (spec.md)
 
-## 1. 模組：抽數字 (Shared Number Drawing Tool)
-這是遊戲的核心工具，供所有版本共用。
+... (1. 抽數字模組保持不變)
 
-### 1.1 功能需求
-- **初始設定流程 (Setup Flow)**: 
-  - 彈出設定對話框。
-- **隱私機制 (Tap to Reveal with Custom Confirmation)**: 
-  - **翻牌確認對話框**: 點擊蓋牌時，彈出自定義置中對話框。
-  - **視覺區分**: 
-    - 「確定揭曉」：醒目的實色按鈕。
-    - 「取消」：低調的文字按鈕。
-  - 玩家點擊卡片即可切換揭曉/蓋牌。
+## 2. 模組：題庫與持久化 (Questions & Persistence)
 
----
+### 2.1 資料模型 (SwiftData Model)
+- **QuestionModel**:
+  - `id`: UUID (Primary Key)
+  - `content`: String (題目敘述)
+  - `scaleLow`: String (1 的描述)
+  - `scaleHigh`: String (10 的描述)
+  - `category`: String (例如："Basic", "Adventure", "NSFW", "Custom")
+  - `isBuiltIn`: Bool (標記是否為系統內建題目)
+  - `createdAt`: Date
 
-## 2. 模組：遊戲版本 (Game Versions)
-... (保持不變)
+### 2.2 核心流程
+- **資料初始化 (Seeding)**:
+  - App 首次啟動時，偵測資料庫是否為空。
+  - 若為空，從內建 JSON 載入基礎題庫並存入 SwiftData。
+- **隨機抽題**:
+  - 支援按 `category` 進行篩選。
+  - 隨機從該類別中選取一題。
+- **客製化題目**:
+  - 提供 API 讓使用者新增、刪除自定義題目。
 
 ---
 
 ## 3. UI/UX 規範 (SwiftUI)
-### 3.2 抽數字畫面
-- **自定義揭曉對話框**: 
-  - 樣式：置中卡片，背景帶有毛玻璃/調暗效果。
-  - 按鈕：Teal 色填滿按鈕 (Confirm) vs. 灰色文字按鈕 (Cancel)。
-- **觸覺回饋 (Haptic Feedback)**: 彈出對話框、點擊確認時觸發。
+...
+### 3.3 遊戲分頁 (GameView)
+- **題目卡片**: 位於畫面中央。
+- **量表定義區**: 清楚顯示 1 與 10 的定義文字。
+- **切換按鈕**: 「下一題」按鈕，觸發新的隨機抽取。
