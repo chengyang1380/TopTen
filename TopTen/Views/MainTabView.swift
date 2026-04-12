@@ -7,10 +7,15 @@ struct MainTabView: View {
         TabView(selection: $viewModel.selectedTab) {
             ForEach(viewModel.tabs) { tab in
                 Group {
-                    if tab.type == .numberDrawing {
+                    switch tab.type {
+                    case .numberDrawing:
                         NumberDrawingView()
-                    } else {
-                        TabContentView(tab: tab)
+                    case .basic:
+                        GameView(category: "基本版")
+                    case .adventure:
+                        GameView(category: "大冒險")
+                    case .nsfw:
+                        GameView(category: "沒有下限")
                     }
                 }
                 .tabItem {

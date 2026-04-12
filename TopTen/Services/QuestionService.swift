@@ -3,13 +3,9 @@ import SwiftData
 
 /// 題目服務介面
 public protocol QuestionServiceProtocol: Sendable {
-    /// 載入該分類下的所有題目
     func fetchQuestions(category: String) async throws -> [QuestionModel]
-    
-    /// 新增一題
     func addQuestion(_ question: QuestionModel) async throws
-    
-    /// 隨機獲取一題
+    func deleteQuestion(_ question: QuestionModel) async throws
     func fetchRandomQuestion(category: String) async throws -> QuestionModel?
 }
 
@@ -33,6 +29,12 @@ public final actor QuestionService: QuestionServiceProtocol {
     @MainActor
     public func addQuestion(_ question: QuestionModel) async throws {
         container.mainContext.insert(question)
+        try container.mainContext.save()
+    }
+    
+    @MainActor
+    public func deleteQuestion(_ question: QuestionModel) async throws {
+        container.mainContext.delete(question)
         try container.mainContext.save()
     }
     

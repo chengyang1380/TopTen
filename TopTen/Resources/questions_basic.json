@@ -1,0 +1,32 @@
+[
+    {
+        "content": "如果你是超級英雄，你的超能力跟大便有關，那是什麼？",
+        "scaleLow": "完全沒用且噁心",
+        "scaleHigh": "足以統治世界",
+        "category": "Basic"
+    },
+    {
+        "content": "說出一個讓我變得有異性緣的方法。",
+        "scaleLow": "這輩子注定單身",
+        "scaleHigh": "原地結婚",
+        "category": "Basic"
+    },
+    {
+        "content": "這是一個什麼樣的派對，會讓你想要馬上奪門而出？",
+        "scaleLow": "有點尷尬但還能待",
+        "scaleHigh": "地獄級災難",
+        "category": "Basic"
+    },
+    {
+        "content": "你發明了一個新的零食，它的口感吃起來像什麼？",
+        "scaleLow": "難吃到想報警",
+        "scaleHigh": "人間美味",
+        "category": "Basic"
+    },
+    {
+        "content": "如果你可以在辦公室裡養一隻寵物，你會養什麼？",
+        "scaleLow": "極度麻煩且討厭",
+        "scaleHigh": "辦公室療癒之神",
+        "category": "Basic"
+    }
+]
