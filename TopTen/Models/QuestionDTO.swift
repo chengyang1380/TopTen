@@ -21,7 +21,7 @@ public struct QuestionDTO: Decodable, Sendable {
 /// 負責從 Bundle 載入 JSON 的工具
 public final class QuestionDataLoader {
     public static func loadBuiltInQuestions() -> [QuestionModel] {
-        let files = ["questions_basic", "questions_adventure"]
+        let files = ["questions_basic", "questions_adventure", "questions_nsfw"]
         var allModels: [QuestionModel] = []
         
         let decoder = JSONDecoder()
