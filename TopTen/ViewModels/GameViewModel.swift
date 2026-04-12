@@ -12,13 +12,15 @@ public final class GameViewModel {
     public var currentQuestion: QuestionModel?
     public var searchText: String = ""
     public var isShowingAddSheet: Bool = false
+    public var isShowingQuestionDialog: Bool = false
+    public var isLoading: Bool = false
     
     public init(category: String, service: QuestionServiceProtocol? = nil) {
         self.category = category
         self.service = service
     }
     
-    /// 取得過濾後的題目清單
+    /// 取得過濾後的題目清單 (全域搜尋)
     public var filteredQuestions: [QuestionModel] {
         if searchText.isEmpty {
             return allQuestions
@@ -26,27 +28,28 @@ public final class GameViewModel {
         return allQuestions.filter { $0.content.localizedCaseInsensitiveContains(searchText) }
     }
     
-    /// 重新載入所有題目
+    /// 載入該分類下的所有題目
     public func loadQuestions() async {
         guard let service = service else { return }
+        isLoading = true
         do {
-            self.allQuestions = try await service.fetchQuestions(category: category)
+            self.allQuestions = try await service.fetchQuestions(category: category, limit: nil, offset: nil)
         } catch {
             print("無法載入題目: \(error)")
         }
+        isLoading = false
     }
     
-    /// 設置服務 (DI)
     public func setup(service: QuestionServiceProtocol) {
         self.service = service
     }
     
-    /// 隨機出題
     public func pickRandomQuestion() {
+        guard !allQuestions.isEmpty else { return }
         self.currentQuestion = allQuestions.randomElement()
+        self.isShowingQuestionDialog = true
     }
     
-    /// 刪除題目
     public func deleteQuestion(at offsets: IndexSet) async {
         guard let service = service else { return }
         

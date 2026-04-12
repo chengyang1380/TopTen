@@ -11,11 +11,11 @@ struct MainTabView: View {
                     case .numberDrawing:
                         NumberDrawingView()
                     case .basic:
-                        GameView(category: "基本版")
+                        GameView(category: "Basic")
                     case .adventure:
-                        GameView(category: "大冒險")
+                        GameView(category: "Adventure")
                     case .nsfw:
-                        GameView(category: "沒有下限")
+                        GameView(category: "NSFW")
                     }
                 }
                 .tabItem {
